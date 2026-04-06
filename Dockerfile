@@ -23,7 +23,7 @@ RUN bench init \
 WORKDIR /home/frappe/frappe-bench
 
 # Copy pre-packaged app source (tarball excludes .git, node_modules)
-ADD repo_exclude_cache.tar.gz apps/erpnext/
+ADD --chown=frappe:frappe repo_exclude_cache.tar.gz apps/erpnext/
 
 # bench get-app requires a git repo — initialize one from the extracted source
 RUN cd apps/erpnext && git init && git add -A && git commit -m "build" --quiet && cd ../.. && \
