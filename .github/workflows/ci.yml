@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [master]
+    branches: [develop]
   pull_request:
-    branches: [master]
+    branches: [develop]
 
 env:
   REGISTRY: ghcr.io
@@ -30,10 +30,11 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Prepare apps.json
-        run: echo '${{ env.APPS_JSON }}' | base64 -w 0 > /tmp/apps_json_base64
-        env:
-          APPS_JSON: |
-            [{"url": "https://github.com/${{ github.repository }}", "branch": "${{ github.ref_name }}"}]
+        id: prepare-apps
+        run: |
+          # Use GITHUB_TOKEN for private repo access during build
+          APPS_JSON='[{"url": "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}", "branch": "${{ github.ref_name }}"}]'
+          echo "base64=$(echo "$APPS_JSON" | base64 -w 0)" >> "$GITHUB_OUTPUT"
 
       - uses: docker/build-push-action@v5
         with:
@@ -44,13 +45,13 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           build-args: |
             FRAPPE_VERSION=develop
-            APPS_JSON_BASE64=${{ steps.prepare-apps.outputs.apps_json_base64 }}
+            APPS_JSON_BASE64=${{ steps.prepare-apps.outputs.base64 }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   deploy:
     needs: build-and-push
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     permissions:
       contents: read
