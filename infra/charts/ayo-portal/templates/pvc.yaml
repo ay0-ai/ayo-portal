@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "ayo-portal.fullname" . }}-sites
+  labels:
+    {{- include "ayo-portal.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.sites.size | quote }}
+  {{- if .Values.persistence.sites.storageClass }}
+  storageClassName: {{ .Values.persistence.sites.storageClass | quote }}
+  {{- end }}

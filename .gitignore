@@ -22,3 +22,7 @@ node_modules/
 # devenv
 .devenv
 .devenv.flake.nix
+# OpenTofu
+.terraform/
+*.tfstate
+*.tfstate.backup

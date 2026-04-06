@@ -1,0 +1,58 @@
+# One-time job: configures site_config, creates site, runs migrations
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "ayo-portal.fullname" . }}-configurator
+  labels:
+    {{- include "ayo-portal.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "1"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: OnFailure
+      containers:
+        - name: configurator
+          image: {{ include "ayo-portal.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["bash", "/scripts/configure.sh"]
+          env:
+            - name: SITE_NAME
+              value: {{ .Values.siteName | quote }}
+            - name: DB_HOST
+              value: {{ .Values.postgresql.host | quote }}
+            - name: DB_PORT
+              value: {{ .Values.postgresql.port | default 5432 | quote }}
+            - name: DB_ROOT_USER
+              value: {{ .Values.postgresql.rootUser | quote }}
+            - name: DB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ayo-portal.fullname" . }}-secrets
+                  key: DB_ROOT_PASSWORD
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ayo-portal.fullname" . }}-secrets
+                  key: ADMIN_PASSWORD
+            - name: REDIS_URL
+              value: {{ include "ayo-portal.redis-url" . | quote }}
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: configurator-script
+              mountPath: /scripts
+      volumes:
+        - name: sites
+          persistentVolumeClaim:
+            claimName: {{ include "ayo-portal.fullname" . }}-sites
+        - name: configurator-script
+          configMap:
+            name: {{ include "ayo-portal.fullname" . }}-configurator
