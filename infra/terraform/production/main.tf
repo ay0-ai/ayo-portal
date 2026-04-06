@@ -20,8 +20,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   default_node_pool {
     name       = "default"
     node_count = 1
-    # B-series burstable — budget-conscious
-    vm_size             = "Standard_B2s"
+    # B-series v2 burstable — budget-conscious (v1 retired in southeastasia)
+    vm_size             = "Standard_B2s_v2"
     os_disk_size_gb     = 30
     temporary_name_for_rotation = "tempdefault"
   }
@@ -77,7 +77,7 @@ resource "azurerm_redis_cache" "main" {
   location                      = azurerm_resource_group.main.location
   capacity                      = 0
   family                        = "C"
-  # Basic C0 — cheapest tier
+  # Basic C0 for now — upgrade to Standard C1 when user load increases
   sku_name                      = "Basic"
   minimum_tls_version           = "1.2"
   public_network_access_enabled = false
