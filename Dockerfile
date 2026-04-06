@@ -31,6 +31,7 @@ ENV NODE_OPTIONS="--max-old-space-size=3072"
 RUN cd apps/erpnext && git init && git config user.email "build@ayo.ai" && git config user.name "build" && git add -A && git commit -m "build" --quiet && cd ../.. && \
     ./env/bin/pip install --quiet -e apps/erpnext && \
     echo "" >> sites/apps.txt && echo "erpnext" >> sites/apps.txt && \
+    yarn --cwd apps/erpnext install --quiet && \
     bench build --production
 
 # Stage 2: Runtime
