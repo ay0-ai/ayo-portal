@@ -77,9 +77,4 @@ jobs:
             infra/charts/ayo-portal \
             -f infra/values/ayo-portal/prd.yaml \
             --set image.tag=${{ github.sha }} \
-            --set postgresql.host=${{ secrets.PG_HOST }} \
-            --set postgresql.rootPassword=${{ secrets.PG_PASSWORD }} \
-            --set redis.host=${{ secrets.REDIS_HOST }} \
-            --set redis.password=${{ secrets.REDIS_PASSWORD }} \
-            --set adminPassword=${{ secrets.ADMIN_PASSWORD }} \
             --wait --timeout 300s

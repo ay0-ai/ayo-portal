@@ -17,10 +17,3 @@ helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 {{ .Values.image.repository }}:{{ .Values.image.tag }}
 {{- end }}
 
-{{- define "ayo-portal.redis-url" -}}
-{{- if .Values.redis.password -}}
-redis://:{{ .Values.redis.password }}@{{ .Values.redis.host }}:{{ .Values.redis.port | default 6379 }}
-{{- else -}}
-redis://{{ .Values.redis.host }}:{{ .Values.redis.port | default 6379 }}
-{{- end -}}
-{{- end }}

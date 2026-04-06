@@ -6,20 +6,11 @@ image:
 imagePullSecrets: []
 
 siteName: erp.ayo.ai
-adminPassword: ""
 
-# External PostgreSQL
-postgresql:
-  host: ""
-  port: 5432
-  rootUser: ayoadmin
-  rootPassword: ""
-
-# External Redis
-redis:
-  host: ""
-  port: 6379
-  password: ""
+# Reference to a pre-existing K8s secret containing infra credentials
+# Expected keys: PG_HOST, PG_PORT, PG_ROOT_USER, PG_ROOT_PASSWORD,
+#                REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, ADMIN_PASSWORD
+existingSecret: ayo-portal-infra
 
 backend:
   replicas: 1

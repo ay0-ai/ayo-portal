@@ -27,23 +27,47 @@ spec:
             - name: SITE_NAME
               value: {{ .Values.siteName | quote }}
             - name: DB_HOST
-              value: {{ .Values.postgresql.host | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: PG_HOST
             - name: DB_PORT
-              value: {{ .Values.postgresql.port | default 5432 | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: PG_PORT
             - name: DB_ROOT_USER
-              value: {{ .Values.postgresql.rootUser | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: PG_ROOT_USER
             - name: DB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "ayo-portal.fullname" . }}-secrets
-                  key: DB_ROOT_PASSWORD
+                  name: {{ .Values.existingSecret }}
+                  key: PG_ROOT_PASSWORD
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "ayo-portal.fullname" . }}-secrets
+                  name: {{ .Values.existingSecret }}
                   key: ADMIN_PASSWORD
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: REDIS_PORT
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: REDIS_PASSWORD
             - name: REDIS_URL
-              value: {{ include "ayo-portal.redis-url" . | quote }}
+              value: "rediss://:$(REDIS_PASSWORD)@$(REDIS_HOST):$(REDIS_PORT)"
           volumeMounts:
             - name: sites
               mountPath: /home/frappe/frappe-bench/sites
