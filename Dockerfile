@@ -27,6 +27,7 @@ ADD --chown=frappe:frappe repo_exclude_cache.tar.gz apps/erpnext/
 
 # bench get-app requires a git repo — initialize one from the extracted source
 # bench get-app requires a git repo and prompts if app dir exists — set up git, then install directly
+ENV NODE_OPTIONS="--max-old-space-size=3072"
 RUN cd apps/erpnext && git init && git config user.email "build@ayo.ai" && git config user.name "build" && git add -A && git commit -m "build" --quiet && cd ../.. && \
     ./env/bin/pip install --quiet -e apps/erpnext && \
     echo "" >> sites/apps.txt && echo "erpnext" >> sites/apps.txt && \
