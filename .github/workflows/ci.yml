@@ -30,7 +30,17 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Package app source
-        run: tar -zcf repo_exclude_cache.tar.gz --exclude=.cache --exclude=.venv --exclude=.git --exclude=node_modules --exclude=.github --exclude=infra .
+        run: |
+          tar -zcf repo_exclude_cache.tar.gz \
+            --exclude=.git \
+            --exclude=node_modules \
+            --exclude=.github \
+            --exclude=infra \
+            --exclude=.devenv \
+            --exclude=repo_exclude_cache.tar.gz \
+            --warning=no-file-changed \
+            . || [ $? -eq 1 ]
+          ls -lh repo_exclude_cache.tar.gz
 
       - uses: docker/build-push-action@v5
         with:
