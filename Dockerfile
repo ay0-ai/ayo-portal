@@ -1,4 +1,5 @@
-# Uses frappe_docker's layered build pattern:
+# syntax=docker/dockerfile:1.2
+# Uses frappe_docker's layered build pattern.
 # One image, multiple roles — differentiated by command at deploy time:
 #   backend:   gunicorn (default CMD)
 #   worker:    bench worker --queue short,default,long
@@ -13,7 +14,6 @@ FROM frappe/build:${FRAPPE_VERSION} AS builder
 
 ARG FRAPPE_VERSION=develop
 
-# Initialize bench with frappe only
 RUN bench init \
   --frappe-branch=${FRAPPE_VERSION} \
   --no-procfile --no-backups \
@@ -22,13 +22,11 @@ RUN bench init \
 
 WORKDIR /home/frappe/frappe-bench
 
-# Copy our app source directly (avoids private repo clone issues)
-COPY --chown=frappe:frappe . apps/erpnext
+# Copy pre-packaged app source (tarball excludes .git, .cache, node_modules, tests)
+ADD repo_exclude_cache.tar.gz apps/erpnext/
 
-# Install the app and build assets
 RUN bench get-app --skip-assets file:///home/frappe/frappe-bench/apps/erpnext && \
-    bench build --production && \
-    find apps -mindepth 1 -path "*/.git" -exec rm -rf {} + 2>/dev/null; true
+    bench build --production
 
 # Stage 2: Runtime
 FROM frappe/base:${FRAPPE_VERSION}
