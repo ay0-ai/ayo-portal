@@ -7,13 +7,13 @@ app_color = "#e74c3c"
 app_email = "hello@frappe.io"
 app_license = "GNU General Public License (v3)"
 source_link = "https://github.com/frappe/erpnext"
-app_logo_url = "/assets/erpnext/images/erpnext-logo.svg"
+app_logo_url = "/assets/erpnext/images/ayo-logo.png"
 app_home = "/desk"
 
 add_to_apps_screen = [
 	{
 		"name": app_name,
-		"logo": "/assets/erpnext/images/erpnext-logo.svg",
+		"logo": "/assets/erpnext/images/ayo-logo.png",
 		"title": app_title,
 		"route": app_home,
 		"has_permission": "erpnext.check_app_permission",
@@ -113,8 +113,8 @@ calendars = ["Task", "Work Order", "Sales Order", "Holiday List", "ToDo"]
 website_generators = ["BOM", "Sales Partner"]
 
 website_context = {
-	"favicon": "/assets/erpnext/images/erpnext-favicon.svg",
-	"splash_image": "/assets/erpnext/images/erpnext-logo.svg",
+	"favicon": "/assets/erpnext/images/ayo-logo.png",
+	"splash_image": "/assets/erpnext/images/ayo-logo.png",
 }
 
 # nosemgrep
@@ -499,7 +499,7 @@ scheduler_events = {
 	],
 }
 
-email_brand_image = "assets/erpnext/images/erpnext-logo.jpg"
+email_brand_image = "assets/erpnext/images/ayo-logo.png"
 
 default_mail_footer = """
 	<span>
